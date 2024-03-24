@@ -1,0 +1,7 @@
+Flask==1.1.4
+pymongo[srv]==3.12.1
+Flask-PyMongo==2.3.0
+Flask-Cors==3.0.10
+Gunicorn==20.1.0
+markupsafe==2.0.1
+brevo-python==1.0.0
