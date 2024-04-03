@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item</title>
+</head>
+<body>
+    <h1>Add a New Item</h1>
+    <form method="POST">
+
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" required><br>
+
+        <label for="price">Price($):</label><br>
+        <input type="number" id="price" name="price" required><br>
+
+        <label for="category">Category:</label><br>
+        <select id="category" name="category" required>
+            <option value="" disabled selected>Select Category</option>
+            <option value="Vehicle">Vehicle</option>
+            <option value="Computer">Computer</option>
+            <option value="Phone">Phone</option>
+            <option value="Private Lesson">Private Lesson</option>
+        </select><br>
+
+        <!-- Additional fields specific to each category -->
+        <div id="additional_fields_container"></div>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" required></textarea><br>
+
+        <label for="image_url">Image URL:</label><br>
+        <input type="text" id="image_url" name="image_url" ><br>
+
+        <label for="active">Active:</label><br>
+        <select id="active" name="active" required>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select><br>
+
+
+                <!-- Additional attributes (dynamic) -->
+        <div id="additional_attributes_container">
+            <div class="attribute_row">
+                <label for="additional_attribute_key">Attribute Name:</label>
+                <input type="text" id="additional_attribute_key" name="additional_attributes[key][]" placeholder="Attribute Name">
+                <label for="additional_attribute_value">Attribute Value:</label>
+                <input type="text" id="additional_attribute_value" name="additional_attributes[value][]" placeholder="Attribute Value">
+            </div>
+        </div>
+        <button type="button" id="add_attribute">Add Attribute</button><br>
+
+    <script>
+
+        document.getElementById('category').addEventListener('change', function () {
+            const category = this.value;
+            const container = document.getElementById('additional_fields_container');
+            container.innerHTML = ''; // Clear previous fields
+
+            if (category === 'Vehicle') {
+                container.innerHTML = `
+                    <label for="type">Type:</label>
+                    <input type="text" id="type" name="type" required><br>
+
+                    <label for="brand">Brand:</label>
+                    <input type="text" id="brand" name="brand" required><br>
+
+                    <label for="model">Model:</label>
+                    <input type="text" id="model" name="model" required><br>
+
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" name="year" required><br>
+
+                    <label for="color">Color:</label>
+                    <input type="text" id="color" name="color" required><br>
+
+                    <label for="engine_displacement">Engine Displacement:</label>
+                    <input type="text" id="engine_displacement" name="engine_displacement" required><br>
+
+                    <label for="fuel_type">Fuel Type:</label>
+                    <input type="text" id="fuel_type" name="fuel_type" required><br>
+
+                    <label for="transmission_type">Transmission Type:</label>
+                    <input type="text" id="transmission_type" name="transmission_type" required><br>
+
+                    <label for="mileage">Mileage:</label>
+                    <input type="text" id="mileage" name="mileage" required><br>
+                `;
+            } else if (category === 'Computer') {
+                container.innerHTML = `
+                    <label for="type">Type:</label>
+                    <input type="text" id="type" name="type" required><br>
+
+                    <label for="brand">Brand:</label>
+                    <input type="text" id="brand" name="brand" required><br>
+
+                    <label for="model">Model:</label>
+                    <input type="text" id="model" name="model" required><br>
+
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" name="year" required><br>
+
+                    <label for="processor">Processor:</label>
+                    <input type="text" id="processor" name="processor" required><br>
+
+                    <label for="ram">RAM:</label>
+                    <input type="text" id="ram" name="ram" required><br>
+
+                    <label for="storage_ssd">Storage (SSD):</label>
+                    <input type="text" id="storage_ssd" name="ssd" ><br>
+
+                    <label for="storage_hdd">Storage (HDD):</label>
+                    <input type="text" id="storage_hdd" name="hdd" ><br>
+
+                    <label for="graphics_card">Graphics Card:</label>
+                    <input type="text" id="graphics_card" name="graphics_card" required><br>
+
+                    <label for="operating_system">Operating System:</label>
+                    <input type="text" id="operating_system" name="operating_system" required><br>
+                `;
+            } else if (category === 'Phone') {
+                container.innerHTML = `
+
+                    <label for="brand">Brand:</label>
+                    <input type="text" id="brand" name="brand" required><br>
+
+                    <label for="model">Model:</label>
+                    <input type="text" id="model" name="model" required><br>
+
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" name="year" required><br>
+
+                    <label for="operating_system">Operating System:</label>
+                    <input type="text" id="operating_system" name="operating_system" required><br>
+
+                    <label for="processor">Processor:</label>
+                    <input type="text" id="processor" name="processor" required><br>
+
+                    <label for="ram">RAM:</label>
+                    <input type="text" id="ram" name="ram" required><br>
+
+                    <label for="storage">Storage:</label>
+                    <input type="text" id="storage" name="storage" required><br>
+
+                    <label for="battery_capacity">Battery Capacity:</label>
+                    <input type="text" id="battery_capacity" name="battery_capacity" required><br>
+                `;
+            } else if (category === 'Private Lesson') {
+                container.innerHTML = `
+
+                    <label for="tutor_name">Tutor Name:</label>
+                    <input type="text" id="tutor_name" name="tutor_name" required><br>
+
+                    <label for="first_lesson">First Lesson:</label>
+                    <input type="text" id="first_lesson" name="first_lesson" ><br>
+
+                    <label for="second_lesson">Second Lesson:</label>
+                    <input type="text" id="second_lesson" name="second_lesson" ><br>
+
+                    <label for="third_lesson">Third Lesson:</label>
+                    <input type="text" id="third_lesson" name="third_lesson" ><br>
+
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" required><br>
+
+                    <label for="duration">Duration:</label>
+                    <input type="text" id="duration" name="duration" required><br>
+                `;
+            }
+        });
+
+
+        function addAttribute() {
+            console.log("Add attribute button clicked"); // Debugging message
+            const container = document.getElementById('additional_attributes_container');
+            const newRow = document.createElement('div');
+            newRow.classList.add('attribute_row');
+            newRow.innerHTML = `
+                <label for="additional_attribute_key">Attribute Name:</label>
+                <input type="text" name="additional_attributes[key][]" placeholder="Attribute Name">
+                <label for="additional_attribute_value">Attribute Value:</label>
+                <input type="text" name="additional_attributes[value][]" placeholder="Attribute Value">
+            `;
+            container.appendChild(newRow);
+        }
+
+        // Event listener for the Add Attribute button
+        document.getElementById('add_attribute').addEventListener('click', function () {
+            addAttribute(); // Call the addAttribute function when the button is clicked
+        });
+    </script>
+
+    <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

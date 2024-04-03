@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .update-form {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .update-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .update-form input[type="text"],
+        .update-form input[type="email"],
+        .update-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .update-form input[type="submit"] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .update-form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="update-form">
+    <h2>Update Profile</h2>
+    <form action="{{ url_for('update_profile') }}" method="post">
+
+        <label for="new_name">New Name:</label>
+        <input type="text" id="new_name" name="new_name" value="{{ session['user_name'] }}" required>
+
+        <label for="new_email">New Email:</label>
+        <input type="email" id="new_email" name="new_email" value="{{ session['email'] }}" required>
+
+        <label for="new_password">New Password:</label>
+        <input type="password" id="new_password" name="new_password" placeholder="" required>
+
+        <label for="new_phone">New Phone Number:</label>
+        <input type="text" id="new_phone" name="new_phone" value="{{ session['phone'] }}" required>
+
+        <input type="submit" value="Update Profile">
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+        ul li {
+            margin-bottom: 5px; /* Adjust this value to reduce the distance */
+        }
+        /* CSS styles for add to favorites button */
+        .favorite-button {
+            background-color: #007bff; /* Change the background color to blue */
+            color: white; /* Set text color to white */
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px; /* Add padding to increase button size */
+            border-radius: 5px; /* Add rounded corners */
+        }
+
+        /* Updated CSS for the favorited state */
+        .favorited {
+            background-color: #ff6347; /* Change background color when favorited */
+        }
+        /* Add spacing between buttons */
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container > div {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ item.title }}</h1>
+        <img src="{{ item.image_url }}" alt="Item Image">
+        <ul>
+            {% for key, value in item.items() %}
+                {% if key == 'price' %}
+                    <li>{{ key }}: {{ value }} $</li>
+                {% elif key not in ['image_url', '_id', 'title', 'active'] %}
+                    <li>{{ key }}: {{ value }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <!-- Add to Favorites button -->
+        <button class="favorite-button {% if liked %}favorited{% endif %}" id="favorite_button">
+            {% if liked %}
+                Remove from Favorites
+            {% else %}
+                Add to Favorites
+            {% endif %}
+        </button>
+        <!-- Button container for spacing -->
+        <div class="button-container">
+            <!-- Edit and delete buttons for owners and admins -->
+            {% if is_owner %}
+                <div>
+                    <!-- Edit button -->
+                    <a href="/items/update/{{ item._id }}" title="Edit Item">
+                        <i class="fas fa-pen"></i>
+                    </a>
+                </div>
+                <div>
+                    <!-- Delete button -->
+                    <form action="/items/delete/{{ item._id }}" method="POST" style="display: inline-block;">
+                        <button type="submit" title="Delete Item">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+            {% elif is_admin %}
+                <div>
+                    <!-- Delete button for admins -->
+                    <form action="/items/delete/{{ item._id }}" method="POST" style="display: inline-block;">
+                        <button type="submit" title="Delete Item">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+            <div>
+                <!-- Reactivate button -->
+                <form action="/activate_deactivate_item/{{ item._id }}" method="POST">
+                    {% if is_owner %}
+                        <button type="submit" name="active" value="{{ 'no' if item.active == 'yes' else 'yes' }}">
+                            {% if item.active == True %}
+                                Deactivate
+                            {% else %}
+                                Reactivate
+                            {% endif %}
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('favorite_button').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Send a request to check if the item is in favorites and add/remove it accordingly
+            fetch('/check_favorite/{{ item._id }}', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to check item in favorites');
+                }
+            })
+            .then(data => {
+                if (data.inFavorites) {
+                    // If the item is in favorites, remove it
+                    fetch('/remove_from_favorites/{{ item._id }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('favorite_button').classList.remove('favorited');
+                            document.getElementById('favorite_button').textContent = 'Add to Favorites';
+                        } else {
+                            throw new Error('Failed to remove item from favorites');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                } else {
+                    // If the item is not in favorites, add it
+                    fetch('/add_to_favorites/{{ item._id }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('favorite_button').classList.add('favorited');
+                            document.getElementById('favorite_button').textContent = 'Remove from Favorites';
+                        } else {
+                            throw new Error('Failed to add item to favorites');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+
+</body>
+</html>
