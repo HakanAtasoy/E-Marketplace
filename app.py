@@ -3,7 +3,6 @@ import string
 import random
 
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_mail import Mail, Message
 from auth import login_required, auth_signup, auth_login, auth_logout, auth_update_user_account, auth_delete_user, \
     hash_password
 from pymongo import MongoClient
